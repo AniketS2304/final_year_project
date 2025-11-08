@@ -49,6 +49,7 @@ class RegisterAPI(CreateAPIView):
 # Login API
 # ------------------------
 class LoginAPI(ObtainAuthToken):
+    # print('login_api')
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
