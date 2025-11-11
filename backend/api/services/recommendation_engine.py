@@ -1,15 +1,20 @@
 # backend/api/services/recommendation_engine.py
+# ============================================
+# COMMENTED OUT - NOT CURRENTLY IN USE
+# This is an advanced investment recommendation engine
+# Currently using the simpler land_recommender.py instead
+# ============================================
 
-import numpy as np
-from typing import List, Dict, Tuple
-from django.db.models import Q
-from geopy.distance import geodesic
-from api.models import (
-    Land, Infrastructure, GovernmentProject, 
-    DevelopmentUseCase, LandRecommendation
-)
-
-class InvestorRecommendationEngine:
+# import numpy as np
+# from typing import List, Dict, Tuple
+# from django.db.models import Q
+# from geopy.distance import geodesic
+# from api.models import (
+#     Land, Infrastructure, GovernmentProject, 
+#     DevelopmentUseCase, LandRecommendation
+# )
+# 
+# class InvestorRecommendationEngine:
     """
     AI Engine to generate investment recommendations for land
     Combines rule-based logic + scoring algorithms
