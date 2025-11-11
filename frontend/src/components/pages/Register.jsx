@@ -16,16 +16,18 @@ function Register() {
         }
     };
 
+
+
     const validate = () => {
         const newErrors = {};
         if (!form.username || form.username.length < 3) {
-            newErrors.username = "Username must be at least 3 characters";
+            newErrors.username = "Username must be 3+ characters";
         }
         if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) {
-            newErrors.email = "Please enter a valid email";
+            newErrors.email = "Invalid email";
         }
         if (!form.password || form.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters";
+            newErrors.password = "Password must be 6+ characters";
         }
         return newErrors;
     };
@@ -43,13 +45,10 @@ function Register() {
 
         try {
             const res = await axios.post("http://127.0.0.1:8000/api/register/", form);
-            console.log("Registered! Token:", res.data.token);
             localStorage.setItem("token", res.data.token);
-            alert("Registration successful! ✅");
             navigate("/dashboard");
         } catch (err) {
-            console.error(err.response?.data);
-            setErrors({ submit: err.response?.data?.error || "Registration failed. Please try again." });
+            setErrors({ submit: "Registration failed" });
         } finally {
             setLoading(false);
         }
@@ -164,9 +163,15 @@ function Register() {
                             {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
                         </div>
 
+                        {/* Global Error Message */}
                         {errors.submit && (
-                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                                {errors.submit}
+                            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                                <div className="flex items-center">
+                                    <svg className="h-5 w-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p className="text-sm text-red-700 font-medium">{errors.submit}</p>
+                                </div>
                             </div>
                         )}
 
@@ -178,13 +183,6 @@ function Register() {
                         >
                             {loading ? "Creating account..." : "Create Account"}
                         </button>
-
-                        <p className="text-xs text-center text-gray-600">
-                            By signing up, you agree to our{" "}
-                            <a href="#" className="text-green-600 hover:text-green-700 font-medium">Terms</a>
-                            {" "}and{" "}
-                            <a href="#" className="text-green-600 hover:text-green-700 font-medium">Privacy Policy</a>
-                        </p>
                     </form>
                 </div>
 

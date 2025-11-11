@@ -1,10 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, Outlet } from "react-router-dom";
+import axios from "axios";
 
 function DashboardLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchUserProfile();
+    }, []);
+
+    const fetchUserProfile = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get("http://127.0.0.1:8000/api/user/profile/", {
+                headers: {
+                    Authorization: `Token ${token}`,
+                },
+            });
+            setUserData(response.data);
+        } catch (error) {
+            console.error("Error fetching user profile:", error);
+            // If token is invalid, redirect to login
+            if (error.response?.status === 401) {
+                localStorage.removeItem("token");
+                navigate("/login");
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -18,6 +46,15 @@ function DashboardLayout() {
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+            )
+        },
+        {
+            name: "Land Recommendations",
+            path: "/dashboard/recommendations",
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             )
         },
@@ -50,10 +87,10 @@ function DashboardLayout() {
         },
         {
             name: "Crop Advisor",
-            path: "/dashboard/advisor",
+            path: "/dashboard/crop-advisor",
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                 </svg>
             )
         },
@@ -177,9 +214,11 @@ function DashboardLayout() {
                                 className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-xl"
                             >
                                 <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                    JD
+                                    {loading ? "..." : (userData?.initials || "U")}
                                 </div>
-                                <span className="hidden md:block font-medium text-gray-700">John Doe</span>
+                                <span className="hidden md:block font-medium text-gray-700">
+                                    {loading ? "Loading..." : (userData?.full_name || userData?.username || "User")}
+                                </span>
                                 <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>

@@ -2,9 +2,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Register from './components/pages/Register';
 import Login from './components/pages/Login';
 import Home from './components/pages/Home';
+import ResetPassword from './components/pages/ResetPassword';
 import DashboardLayout from './components/layout/DashboardLayout.jsx';
 import Dashboard from './components/pages/Dashboard';
 import Profile from './components/pages/Profile';
+import LandRecommendations from './components/pages/LandRecommendations';
+import CropRecommendations from './components/pages/CropRecommendations';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -20,6 +23,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
 
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard" element={
@@ -29,12 +33,13 @@ function App() {
         }>
           <Route index element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="recommendations" element={<LandRecommendations />} />
+          <Route path="crop-advisor" element={<CropRecommendations />} />
 
           {/* Placeholder routes for other features */}
           <Route path="map" element={<ComingSoon title="Interactive Map" />} />
           <Route path="properties" element={<ComingSoon title="My Properties" />} />
           <Route path="calculator" element={<ComingSoon title="ROI Calculator" />} />
-          <Route path="advisor" element={<ComingSoon title="Crop Advisor" />} />
           <Route path="analytics" element={<ComingSoon title="Analytics" />} />
           <Route path="settings" element={<ComingSoon title="Settings" />} />
         </Route>
