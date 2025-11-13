@@ -3,10 +3,12 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .serializers import RegisterSerializer, UserProfileSerializer
 from rest_framework import status
 from rest_framework.views import APIView
+
+User = get_user_model()
 
 # ------------------------
 # Register API

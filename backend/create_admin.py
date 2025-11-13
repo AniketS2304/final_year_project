@@ -5,7 +5,9 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'agriwise_backend.settings')
 django.setup()
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 # Create superuser
 username = 'admin'

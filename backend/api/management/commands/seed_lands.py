@@ -2,11 +2,13 @@
 # Create directory structure: api/management/commands/
 
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from api.models import Land
 from decimal import Decimal
 from django.utils.text import slugify
 import random
+
+User = get_user_model()
 
 class Command(BaseCommand):
     help = 'Seed database with sample land data'

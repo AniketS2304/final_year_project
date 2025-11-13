@@ -1,12 +1,36 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import (
+    CustomUser,
     Land, 
     # LandImage, Infrastructure, GovernmentProject,  # COMMENTED OUT
     # DevelopmentUseCase, LandRecommendation, ROICalculation,  # COMMENTED OUT
-    UserQuery, SavedLand
+    UserQuery, SavedLand,
+    SoilData, CropRecommendation
 )
 
 # Register your models here.
+
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    """Admin for CustomUser model"""
+    list_display = ['username', 'email', 'user_type', 'is_verified', 'is_staff', 'date_joined']
+    list_filter = ['user_type', 'is_verified', 'is_staff', 'is_superuser', 'date_joined']
+    search_fields = ['username', 'email', 'first_name', 'last_name', 'phone_number']
+    ordering = ['-date_joined']
+    
+    fieldsets = UserAdmin.fieldsets + (
+        ('Additional Info', {
+            'fields': ('user_type', 'phone_number', 'address', 'profile_picture', 'bio', 'is_verified')
+        }),
+    )
+    
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Additional Info', {
+            'fields': ('user_type', 'phone_number', 'email')
+        }),
+    )
+
 
 @admin.register(Land)
 class LandAdmin(admin.ModelAdmin):
@@ -133,4 +157,50 @@ class SavedLandAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'land__name', 'notes']
     ordering = ['-saved_at']
     date_hierarchy = 'saved_at'
+
+
+@admin.register(SoilData)
+class SoilDataAdmin(admin.ModelAdmin):
+    """Admin for SoilData model"""
+    list_display = ['id', 'user', 'land', 'location', 'test_date', 'ph', 'nitrogen', 'phosphorous', 'potassium']
+    list_filter = ['test_date', 'created_at']
+    search_fields = ['user__username', 'land__name', 'location', 'notes']
+    ordering = ['-created_at']
+    date_hierarchy = 'test_date'
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('user', 'land', 'location', 'notes')
+        }),
+        ('NPK Values', {
+            'fields': ('nitrogen', 'phosphorous', 'potassium')
+        }),
+        ('Soil Properties', {
+            'fields': ('ph',)
+        }),
+        ('Climate Data', {
+            'fields': ('temperature', 'humidity', 'rainfall')
+        }),
+        ('Metadata', {
+            'fields': ('test_date', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    readonly_fields = ['test_date', 'created_at', 'updated_at']
+
+
+@admin.register(CropRecommendation)
+class CropRecommendationAdmin(admin.ModelAdmin):
+    """Admin for CropRecommendation model"""
+    list_display = ['id', 'user', 'recommended_crop', 'confidence_percentage', 'soil_suitability', 'created_at']
+    list_filter = ['recommended_crop', 'soil_suitability', 'created_at']
+    search_fields = ['user__username', 'recommended_crop']
+    ordering = ['-created_at']
+    date_hierarchy = 'created_at'
+    readonly_fields = ['created_at', 'confidence_percentage']
+    
+    def confidence_percentage(self, obj):
+        return f"{obj.get_confidence_percentage()}%"
+    confidence_percentage.short_description = 'Confidence'
+
 
